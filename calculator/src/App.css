@@ -2,27 +2,94 @@
   text-align: center;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+.calculator {
+  width: 95vw;
+  margin: auto;
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+.calcHeader {
+  border: 1px solid blue;
 }
 
-.App-title {
-  font-size: 1.5em;
+.calcDisplay {
+  border: 1px solid black;
+  height: 20vh;
+  line-height: 20vh;
 }
 
-.App-intro {
-  font-size: large;
+.calcInputZone {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-column-gap: 2vw;
+  grid-row-gap: 2vw;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.calcInput {
+  border: 1px solid black;
+  height: 22.25vw;
+  line-height: 22.25vw;
+}
+
+@media (min-width: 500px) {
+  .calculator {
+    width: 55vw;
+  }
+
+  .calcDisplay {
+    height: 15vh;
+    line-height: 15vh;
+  }
+
+  .calcInputZone {
+    grid-column-gap: 1vw;
+    grid-row-gap: 1vw;
+  }
+
+  .calcInput {
+    height: 11.5vw;
+    line-height: 11.5vw;
+  }
+}
+
+@media (min-width: 700px) {
+  .calculator {
+    width: 45vw;
+  }
+
+  .calcInput {
+    height: 10.5vw;
+    line-height: 10.5vw;
+  }
+}
+
+@media (min-width: 1000px) {
+  .calculator {
+    width: 35vw;
+  }
+
+  .calcDisplay {
+    height: 12vh;
+    line-height: 12vh;
+  }
+
+  .calcInputZone {
+    grid-column-gap: .5vw;
+    grid-row-gap: .5vw;
+  }
+
+  .calcInput {
+    height: 7.5vw;
+    line-height: 7.5vw;
+  }
+}
+
+@media (min-width: 1500px) {
+  .calculator {
+    width: 20vw;
+  }
+
+  .calcInput {
+    height: 4.3vw;
+    line-height: 4.3vw;
+  }
 }
