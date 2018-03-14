@@ -14,7 +14,27 @@
 .calcDisplay {
   border: 1px solid black;
   height: 20vh;
+  margin-bottom: 8px;
+}
+
+.equationDisplay {
+  height: 20vh;
   line-height: 20vh;
+  margin: 0;
+  width: 73.5%;
+  text-align: left;
+  padding-left: 2%;
+  float: left;
+  border-right: 2px solid black;
+  font-weight: 400;
+}
+
+.mainDisplay {
+  height: 20vh;
+  line-height: 20vh;
+  margin: 0;
+  width: 23.5%;
+  float: right;
 }
 
 .calcInputZone {
@@ -37,7 +57,18 @@
 
   .calcDisplay {
     height: 15vh;
+  }
+
+  .equationDisplay {
+    height: 15vh;
     line-height: 15vh;
+    margin: 0;
+  }
+
+  .mainDisplay {
+    height: 15vh;
+    line-height: 15vh;
+    margin: 0;
   }
 
   .calcInputZone {
@@ -69,7 +100,18 @@
 
   .calcDisplay {
     height: 12vh;
+  }
+
+  .equationDisplay {
+    height: 12vh;
     line-height: 12vh;
+    margin: 0;
+  }
+
+  .mainDisplay {
+height: 12vh;
+    line-height: 12vh;
+    margin: 0;
   }
 
   .calcInputZone {
