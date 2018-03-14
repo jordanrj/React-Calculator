@@ -45,6 +45,19 @@ class App extends Component {
     console.log(this.state.equation);
   }
 
+  updateInput(e) {
+    if (this.state.result === true) {
+      this.setState({ currentInput: e.target.innerHTML });
+      this.setState({ result: false });
+      this.setState({ equation: e.target.innerHTML });
+    } else {
+      let newInput = this.state.currentInput;
+      newInput += e.target.innerHTML;
+      this.setState({ currentInput: newInput });
+      this.setState({ equation: this.state.equation + e.target.innerHTML });
+    }
+  }
+
   clear() {
     this.setState({value: 0});
     this.setState({currentInput: ""});
@@ -83,19 +96,6 @@ class App extends Component {
     }
     this.updateEquation(" " + e.target.innerHTML);
     
-  }
-
-  updateInput(e) {
-    if (this.state.result === true) {
-      this.setState({ currentInput: e.target.innerHTML });
-      this.setState({ result: false });
-      this.setState({ equation: e.target.innerHTML });
-    } else {
-      let newInput = this.state.currentInput;
-      newInput += e.target.innerHTML;
-      this.setState({ currentInput: newInput });
-      this.setState({ equation: this.state.equation + e.target.innerHTML });
-    }   
   }
 
   pushNum() {
