@@ -13,6 +13,7 @@ class Display extends Component {
     )
   }
 }
+
 class App extends Component {
   constructor() {
     super();
@@ -25,15 +26,12 @@ class App extends Component {
       value: 0
     };
 
-    this.clear = this.clear.bind(this);
-    this.pushOp = this.pushOp.bind(this);
+    this.updateEquation = this.updateEquation.bind(this);
     this.updateInput = this.updateInput.bind(this);
+    this.clear = this.clear.bind(this); 
+    this.pushOp = this.pushOp.bind(this);
     this.pushNum = this.pushNum.bind(this);
-    this.solve = this.solve.bind(this);
-    this.multiply = this.multiply.bind(this);
-    this.divide = this.divide.bind(this);
-    this.add = this.add.bind(this);
-    this.subtract = this.subtract.bind(this);
+    this.handleOp = this.handleOp.bind(this);
   }
 
   updateEquation(item) {
@@ -42,7 +40,6 @@ class App extends Component {
       return;
     }
     this.setState({ equation: this.state.equation + item + " " });
-    console.log(this.state.equation);
   }
 
   updateInput(e) {
@@ -64,7 +61,26 @@ class App extends Component {
     this.setState({ equation: "" });
   }
 
-  pushOp(e) {
+  pushOp(op) {
+    var opArray = this.state.operations;
+    opArray.push(op);
+    this.setState({ operations: opArray });
+  }
+
+  pushNum() {
+    //gets current input and adds that to the numbers array.
+    //also clears the current input
+    let input = parseFloat(this.state.currentInput);
+    var numArray = this.state.numbers;
+
+    numArray.push(input);
+    this.setState({ numbers: numArray });
+    this.setState({ currentInput: "" });
+    this.setState({ equation: this.state.equation + " " });
+  }
+
+  //Check the input operation and the context of the equation
+  handleOp(e) {
     //check if using the previous result as operand
     if (this.state.result === true) {
       var currentInput = this.state.currentInput;
@@ -74,7 +90,7 @@ class App extends Component {
       this.setState({ equation: equation });
       this.setState({ result: false });
     }
-    
+    //check if request to solve equation
     if (e.target.innerHTML === "=") {
       const ops = this.state.operations;
       const nums = this.state.numbers;    
@@ -82,34 +98,17 @@ class App extends Component {
       this.setState({ currentInput: this.solve(ops, nums) + "" },
         function() {
           this.setState({ equation: this.state.currentInput });
-          this.setState({ value: parseInt(this.state.currentInput) });
+          this.setState({ value: parseFloat(this.state.currentInput) });
         }
       );
       this.setState({ numbers: []} );
       this.setState({ result: true });
     } else {
-      var opArray = this.state.operations;
-      opArray.push(e.target.innerHTML);
+      this.pushOp(e.target.innerHTML);
       this.pushNum();
-      this.setState({ operations: opArray });
-
     }
     this.updateEquation(" " + e.target.innerHTML);
-    
   }
-
-  pushNum() {
-    //gets current input and adds that to the numbers array.
-    //also clears the current input
-    let input = parseInt(this.state.currentInput);
-    var numArray = this.state.numbers; 
-
-    numArray.push(input);      
-    this.setState({numbers: numArray});
-    this.setState({currentInput: ""});
-    this.setState({ equation: this.state.equation + " " });
-  }
-
   
   multiplyLoop(operations, numbers) {
     var result = 0;
@@ -193,14 +192,12 @@ class App extends Component {
     return numbers[0];
   }
 
-
   multiply(num1, num2) {
     return num1 * num2;
   }
 
   divide(num1, num2) {
     return num1 / num2;
-   
   }
 
   add(num1, num2) {
@@ -223,21 +220,21 @@ class App extends Component {
           <Display value={display} equation={equation} />  
           <div className="calcInputZone">
             <div className="inputClear calcInput" onClick={this.clear}>C</div>
-            <div className="inputNegative calcInput" onClick={this.pushOp}>+/-</div>
-            <div className="inputDivide calcInput" onClick={this.pushOp}>/</div>
-            <div className="inputMultiply calcInput" onClick={this.pushOp}>x</div>
+            <div className="inputNegative calcInput" onClick={this.handleOp}>+/-</div>
+            <div className="inputDivide calcInput" onClick={this.handleOp}>/</div>
+            <div className="inputMultiply calcInput" onClick={this.handleOp}>x</div>
             <div className="inputSeven calcInput" onClick={this.updateInput}>7</div>
             <div className="inputEight calcInput"  onClick={this.updateInput}>8</div>
             <div className="inputNine calcInput" onClick={this.updateInput}>9</div>
-            <div className="inputSubtract calcInput" onClick={this.pushOp}>-</div>
+            <div className="inputSubtract calcInput" onClick={this.handleOp}>-</div>
             <div className="inputFour calcInput" onClick={this.updateInput}>4</div>
             <div className="inputFive calcInput" onClick={this.updateInput}>5</div>
             <div className="inputSix calcInput" onClick={this.updateInput}>6</div>
-            <div className="inputAdd calcInput" onClick={this.pushOp}>+</div>
+            <div className="inputAdd calcInput" onClick={this.handleOp}>+</div>
             <div className="inputOne calcInput" onClick={this.updateInput}>1</div>
             <div className="inputTwo calcInput" onClick={this.updateInput}>2</div>
             <div className="inputThree calcInput" onClick={this.updateInput}>3</div>
-            <div className="inputEquals calcInput" onClick={this.pushOp}>=</div>
+            <div className="inputEquals calcInput" onClick={this.handleOp}>=</div>
             <div className="inputZero calcInput" onClick={this.updateInput}>0</div>
             <div className="inputDecimal calcInput" onClick={this.updateInput}>.</div>            
           </div>

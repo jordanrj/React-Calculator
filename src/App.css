@@ -6,7 +6,7 @@
   width: 95vw;
   margin: auto;
   padding: 25px;
-  background: rgb(231, 153, 153);
+  background: rgb(211, 192, 22);
   box-shadow: 5px 7px 4px  rgb(102, 108, 126);
 }
 
@@ -54,6 +54,13 @@
   box-shadow: 2px 2px 1px rgb(82, 11, 41);
   height: 22.25vw;
   line-height: 22.25vw;
+}
+
+.calcInput:active {
+  background: blue;
+  box-shadow: none;
+  padding: 0 2px 2px 0;
+  margin: 0 -2px -2px 0;
 }
 
 @media (min-width: 500px) {
