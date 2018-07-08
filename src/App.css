@@ -6,16 +6,11 @@
   width: 95vw;
   margin: auto;
   padding: 25px;
-  background: rgb(211, 192, 22);
+  background: rgb(59, 59, 53);
   box-shadow: 5px 7px 4px  rgb(102, 108, 126);
 }
 
-.calcHeader {
-  border: 1px solid blue;
-}
-
 .calcDisplay {
-
   height: 20vh;
   margin-bottom: 25px;
   background: rgb(232, 237, 247);
