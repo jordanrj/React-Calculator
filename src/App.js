@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import CalcButton from './Button.js';
 import './App.css';
 
 
@@ -8,7 +9,7 @@ class Display extends Component {
     return (
       <div className="calcDisplay">
         <h2 className="equationDisplay">{this.props.equation}</h2>
-        <h2 className="mainDisplay">{this.props.value}</h2>
+        <h2 className="mainDisplay">{Math.round(this.props.value * 100) / 100}</h2>
       </div>
     )
   }
@@ -78,103 +79,68 @@ class App extends Component {
     this.setState({ currentInput: "" });
     this.setState({ equation: this.state.equation + " " });
   }
+  
+  //Resets the equation to use the solution to the previous equation as an operand
+  resetEquationWithResult = (op) => {
+      var currentInput = this.state.currentInput;
+      var equation = this.state.equation;
+      equation = currentInput + " " + op + " ";
+      this.setState({ equation: equation, 
+        currentInput: "", 
+        result: false, 
+        numbers: [parseInt(this.state.currentInput, 10)],
+        operations: [op]
+       });
+  }
 
   //Check the input operation and the context of the equation
   handleOp(e) {
-    //check if using the previous result as operand
-    if (this.state.result === true) {
-      var currentInput = this.state.currentInput;
-      var equation = this.state.equation;
-
-      equation = currentInput + "";
-      this.setState({ equation: equation });
-      this.setState({ result: false });
+    //check for two consecutive operators (disallowed)
+    let lastOp =  this.state.equation[this.state.equation.length - 2];
+    if (lastOp === 'X' || lastOp === '/' || lastOp === '+' || lastOp === '-') {
+      return;
     }
+    
+    //check if using the previous result as operand 
+    if (this.state.result === true) {
+      if (e.target.innerHTML === '=') return;
+      this.resetEquationWithResult(e.target.innerHTML);
+      return;
+    }
+
     //check if request to solve equation
     if (e.target.innerHTML === "=") {
       const ops = this.state.operations;
-      const nums = this.state.numbers;    
+      const nums = this.state.numbers;   
       this.pushNum();
+      
       this.setState({ currentInput: this.solve(ops, nums) + "" },
         function() {
-          this.setState({ equation: this.state.currentInput });
-          this.setState({ value: parseFloat(this.state.currentInput) });
+          if ('=' !== this.state.equation[this.state.equation.length - 2]) {
+            this.setState({ equation: this.state.currentInput, value: parseFloat(this.state.currentInput) });
+          }
         }
       );
-      this.setState({ numbers: []} );
-      this.setState({ result: true });
-    } else {
+      this.setState({ numbers: [], result: true });
+    } else {  
       this.pushOp(e.target.innerHTML);
       this.pushNum();
     }
+    
     this.updateEquation(" " + e.target.innerHTML);
   }
   
-  multiplyLoop(operations, numbers) {
-    var result = 0;
-
-    //multiply loop
-    for (let i = 0; i < operations.length; i++) {
-      if (i === -1) {
-        i++;
-      }
-      if (operations[i] === "x") {
-        result = this.multiply(numbers[i], numbers[i + 1]);
-        numbers.splice(i, 2, result);
-        operations.splice(i, 1);
-        i--;
-      }
-    }
-  }
-
-  divideLoop(operations, numbers) {
-    var result = 0;
-    
-    //divide loop
-    for (let i = 0; i < operations.length; i++) {
-      if (i === -1) {
-        i++;
-      }
-      if (operations[i] === "/") {
-        result = this.divide(numbers[i], numbers[i + 1]);
-        numbers.splice(i, 2, result);
-        operations.splice(i, 1);
-        i--;
-
-      }
-    }
-  }
-
-  addLoop(operations, numbers) {
-    var result = 0;
-    //add loop
-    for (let i = 0; i < operations.length; i++) {
-      if (i === -1) {
-        i++;
-      }
-      if (operations[i] === "+") {
-        result = this.add(numbers[i], numbers[i + 1]);
-        numbers.splice(i, 2, result);
-        operations.splice(i, 1);
-        i--;
-      }
-    }
-  }
-
-  subtractLoop(operations, numbers) {
-    var result = 0;
-    //subtract loop
-    for (let i = 0; i < operations.length; i++) {
-      if (i === -1) {
-        i++;
-      }
-      if (operations[i] === "-") {
-        result = this.subtract(numbers[i], numbers[i + 1]);
-        console.log(result);
-        numbers.splice(i, 2, result);
-        operations.splice(i, 1);
-        i--;
-      }
+  performOperation = (operation, numbers) => {
+    if  (operation === 'X') {
+      return this.multiply(numbers[0], numbers[1]);
+    } else if (operation === '/') {
+      return this.divide(numbers[0], numbers[1]);
+    } else if  (operation === '+') {
+      return this.add(numbers[0], numbers[1]);
+    } else if (operation === "-") {
+      return this.subtract(numbers[0], numbers[1]);
+    } else {
+      console.error("ERR: Unknown Operator.");
     }
   }
 
@@ -184,10 +150,13 @@ class App extends Component {
     var operations = this.state.operations;
     var numbers = this.state.numbers;
     
-    this.multiplyLoop(operations,numbers);
-    this.divideLoop(operations, numbers);
-    this.addLoop(operations, numbers);
-    this.subtractLoop(operations, numbers);
+    for (let i = 0; i < operations.length; i++) {
+      if (i === -1) i++;
+      let result = this.performOperation(operations[0], numbers.slice(0,2));
+      numbers.splice(i, 2, result);
+      operations.splice(i, 1);
+      i--;
+    }
 
     return numbers[0];
   }
@@ -219,24 +188,24 @@ class App extends Component {
         <div className="calculator">
           <Display value={display} equation={equation} />  
           <div className="calcInputZone">
-            <div className="inputClear calcInput" onClick={this.clear}>C</div>
-            <div className="inputNegative calcInput" onClick={this.handleOp}>+/-</div>
-            <div className="inputDivide calcInput" onClick={this.handleOp}>/</div>
-            <div className="inputMultiply calcInput" onClick={this.handleOp}>x</div>
-            <div className="inputSeven calcInput" onClick={this.updateInput}>7</div>
-            <div className="inputEight calcInput"  onClick={this.updateInput}>8</div>
-            <div className="inputNine calcInput" onClick={this.updateInput}>9</div>
-            <div className="inputSubtract calcInput" onClick={this.handleOp}>-</div>
-            <div className="inputFour calcInput" onClick={this.updateInput}>4</div>
-            <div className="inputFive calcInput" onClick={this.updateInput}>5</div>
-            <div className="inputSix calcInput" onClick={this.updateInput}>6</div>
-            <div className="inputAdd calcInput" onClick={this.handleOp}>+</div>
-            <div className="inputOne calcInput" onClick={this.updateInput}>1</div>
-            <div className="inputTwo calcInput" onClick={this.updateInput}>2</div>
-            <div className="inputThree calcInput" onClick={this.updateInput}>3</div>
-            <div className="inputEquals calcInput" onClick={this.handleOp}>=</div>
-            <div className="inputZero calcInput" onClick={this.updateInput}>0</div>
-            <div className="inputDecimal calcInput" onClick={this.updateInput}>.</div>            
+            <CalcButton className ='inputClear' value='C' handleEvent={this.clear}/>
+            <CalcButton className="inputNegative" value='+/-' handleEvent={this.handleOp} />
+            <CalcButton className="inputDivide" value='/' handleEvent={this.handleOp} />
+            <CalcButton className="inputMultiply" value='X' handleEvent={this.handleOp} />
+            <CalcButton className="inputSeven" value='7'handleEvent={this.updateInput} />
+            <CalcButton className="inputEight" value='8' handleEvent={this.updateInput} />
+            <CalcButton className="inputNine" value='9' handleEvent={this.updateInput} />
+            <CalcButton className="inputSubtract" value='-' handleEvent={this.handleOp} />
+            <CalcButton className="inputFour" value='4' handleEvent={this.updateInput} />
+            <CalcButton className="inputFive" value='5' handleEvent={this.updateInput} />
+            <CalcButton className="inputSix" value='6'handleEvent={this.updateInput} />
+            <CalcButton className="inputAdd" value='+' handleEvent={this.handleOp} />
+            <CalcButton className="inputOne" value='1' handleEvent={this.updateInput} />
+            <CalcButton className="inputTwo" value='2' handleEvent={this.updateInput} />
+            <CalcButton className="inputThree" value='3' handleEvent={this.updateInput} />
+            <CalcButton className="inputEquals" value='=' handleEvent={this.handleOp} />
+            <CalcButton className="inputZero" value='0' handleEvent={this.updateInput} />
+            <CalcButton className="inputDecimal" value='.' handleEvent={this.updateInput} />         
           </div>
         </div>
       </div>
